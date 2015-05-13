@@ -5,13 +5,15 @@
   <title>Maze</title>
   <link href="maze.css" rel="stylesheet" type="text/css" />
 </head>
-<body>
+<body onLoad="run()">
   <table class="output">
   <tr>
     <td rowspan="2" id="output"></td>
     <td id="controlls">
-      Size: <input type="text" name="size_input" id="x_input" size="1" maxlength="3" value="3" /> x
-      <input type="text" name="size_input" id="y_input" size="1" maxlength="3" value="3" /><br />
+	  Start coords: <input type="text" id="start_x" size="1" maxlength="3" value="1" /> x
+	  <input type="text" id="start_y" size="1" maxlength="3" value="1" /><br />
+      Size: <input type="text" name="size_input" id="x_input" size="1" maxlength="3" value="9" /> x
+      <input type="text" name="size_input" id="y_input" size="1" maxlength="3" value="9" /><br />
       Step size: <input type="text" name="step_input" id="step_input" size="1" maxlength="2" value="2" /><br />
       Generation type: <br />
       <input type="radio" name="genType" value="0" checked="checked" />Instant
@@ -25,7 +27,7 @@
         <option value="ultra">ultra fast</option>
       </select>
       <br />
-      <button onclick="generateMaze()">Generate maze</button>
+      <button onclick="run()">Generate maze</button>
     </td>
   </tr>
   <tr>

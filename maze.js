@@ -5,6 +5,10 @@
   1 0 0 0 0
   1 0 0 0 0
 */
+var G_LEFT = 0,
+    G_RIGHT = 1,
+    G_DOWN = 2,
+    G_UP = 3;
 
 Array.matrix = Array.matrix || function(numrows, numcols, initial) {
   var arr = [];
@@ -24,8 +28,6 @@ var Maze = function(width, height, stepSize) {
       y_cords = [],
       x_cords_out = [],
       y_cords_out = [],
-      startX,
-      startY,
       stepCtx = 0,
       time;
 
@@ -57,11 +59,11 @@ var Maze = function(width, height, stepSize) {
   var printInstant = function() {
     var ctx = prepareCanvas(), i, j;
     for (i = 0; i < matrix.length; i++) {
-          for (j = 0; j < matrix[i].length; j++) {
+      for (j = 0; j < matrix[i].length; j++) {
         if (matrix[i][j]) {
           ctx.fillRect(i*10, j*10, 10, 10);
         }
-          }
+      }
     }
   };
  
@@ -81,22 +83,22 @@ var Maze = function(width, height, stepSize) {
     var result = Math.floor(Math.random() * 4),
         i;
    
-      if (typeof except === 'undefined') {
-          return result;
-      }
-   
-      for (i = 0; i < except.length; i++) {
+    if (typeof except === 'undefined') {
+      return result;
+    }
+
+    for (i = 0; i < except.length; i++) {
       if (result === except[i]) {
         result = randomDirection(except);
       }
-      }
+    }
    
-     return result;
+    return result;
   };
 
   var generate = function(cx, cy) {
 
-      this.findDirection = function() {
+    this.findDirection = function() {
       var direction = randomDirection(),
           exceptions = [];
 
@@ -108,104 +110,102 @@ var Maze = function(width, height, stepSize) {
         direction = randomDirection(exceptions);
       }
 
-         return direction;
-      };
-   
-      this.move = function(direction) {
-          var x = 0, y = 0, sign;
-          stepCtx++;
-       
-          if (direction === G_UP) {
-             sign = -1;
-             y = 1;
-          } else if (direction === G_DOWN) {
-              sign = 1;
-              y = 1;
-          } else if (direction === G_RIGHT) {
-              sign = 1;
-              x = 1;
-          } else {
-              sign = -1;
-              x = 1;
-          }
-          for (var i = 0; i <= stepSize; i++) {
+      return direction;
+    };
+ 
+    this.move = function(direction) {
+      var x = 0, y = 0, sign;
+      stepCtx++;
+     
+      if (direction === G_LEFT) {
+        sign = -1;
+        y = 1;
+      } else if (direction === G_RIGHT) {
+        sign = 1;
+        y = 1;
+      } else if (direction === G_DOWN) {
+        sign = 1;
+        x = 1;
+      } else {
+        sign = -1;
+        x = 1;
+      }
+      for (var i = 0; i <= stepSize; i++) {
         x_cords_out.push(cx + (i*x*sign));
         y_cords_out.push(cy + (i*y*sign));
         matrix[cy + (i*y*sign)][cx + (i*x*sign)] = 1;
-          }
-          cy = cy + (sign*y*stepSize);
-          cx = cx + (sign*x*stepSize);
-      };
+      }
+      cy = cy + (sign*y*stepSize);
+      cx = cx + (sign*x*stepSize);
+    };
+ 
+    this.notBlocking = function(direction) {
+      if (direction === G_LEFT) {
+        return cy - stepSize >= 0 && matrix[cy - stepSize][cx] === 0;
+      } else if (direction === G_RIGHT) {
+        return cy + stepSize < width && matrix[cy + stepSize][cx] === 0;
+      } else if (direction === G_DOWN) {
+        return cx + stepSize < height && matrix[cy][cx + stepSize] === 0;
+      } else {                                       
+        return cx - stepSize >= 0 && matrix[cy][cx - stepSize] === 0;
+      }
+    };
    
-      this.notBlocking = function(direction) {
-          if (direction === G_UP) {
-        return cy - stepSize >= startY && matrix[cy - stepSize][cx] === 0;
-          } else if (direction === G_DOWN) {
-              return cy + stepSize <= height && matrix[cy + stepSize][cx] === 0;
-          } else if (direction === G_RIGHT) {
-              return cx + stepSize <= width && matrix[cy][cx + stepSize] === 0;
-          } else {                                       
-              return cx - stepSize >= startX && matrix[cy][cx - stepSize] === 0;
-          }
-      };
-   
-      var back = false;
+    var back = false;
     var dir = this.findDirection();
 
-      switch (dir) {
-      case -1:
-        back = true;
-        break;
-      case G_UP:
-        this.move(G_UP);
-        break;
-      case G_DOWN:
-        this.move(G_DOWN);
-        break;
-      case G_RIGHT:
-        this.move(G_RIGHT);
-        break;
-      case G_LEFT:
-        this.move(G_LEFT);
-        break;
-      default:
-        alert('error! this should not happen...');
-        break;
-      }
+    switch (dir) {
+    case -1:
+      back = true;
+      break;
+    case G_LEFT:
+      this.move(G_LEFT);
+      break;
+    case G_RIGHT:
+      this.move(G_RIGHT);
+      break;
+    case G_DOWN:
+      this.move(G_DOWN);
+      break;
+    case G_UP:
+      this.move(G_UP);
+      break;
+    default:
+      alert('error! this should not happen...');
+      break;
+    }
    
-      if (!back || x_cords.length && y_cords.length) {
+    if (!back || x_cords.length && y_cords.length) {
       if (back) {
-            generate(x_cords.pop(), y_cords.pop());
-          } else {
+        generate(x_cords.pop(), y_cords.pop());
+      } else {
         x_cords.push(cx);
         y_cords.push(cy);
         generate(cx, cy);
-          }
       }
+    }
   };
 
   this.run = function run(x, y) {
-     var startTime = Date.now();
-     startX = x;
-     startY = y;
-     generate(x, y);
-     time = (Date.now() - startTime)*0.001;
+    var startTime = Date.now();
+    generate(y, x);
+    time = (Date.now() - startTime)*0.001;
   };
 
   this.getTime = function() {
-     return time;
+    return time;
   };
 
   this.getStepCtx = function() {
-     return stepCtx;
+    return stepCtx;
   };
  
   this.getXPath = function() {
-     return x_cords_out;
+    return x_cords_out;
   };
  
   this.getYPath = function() {
-     return y_cords_out;
+    return y_cords_out;
   };
 
   this.printInstant = printInstant;
@@ -215,14 +215,14 @@ var Maze = function(width, height, stepSize) {
     var out = '<table class="mazeTable">',
         i, j;
 
-    for (i = 0; i < matrix.length; i++) {
-       out += '<tr>';
-       for (j = 0; j < matrix[i].length; j++) {
-          out += matrix[j][i] ?
-        '<td class="route"></td>' :
-        '<td class="wall"></td>';
+    for (i = 0; i < matrix[0].length; i++) {
+      out += '<tr>';
+      for (j = 0; j < matrix.length; j++) {
+        out += matrix[j][i] ?
+          '<td class="route"></td>' :
+          '<td class="wall"></td>';
       }
-          out += '</tr>';
+      out += '</tr>';
     }
     out += '</table>';
     document.getElementById('output').innerHTML = out;
