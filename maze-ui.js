@@ -1,10 +1,9 @@
 var G_INSTANT = 0,
     G_STEP_BY_STEP = 1;
 
-function printStats(width, height, stepSize, steps, time) {
+function printStats(width, height, steps, time) {
   var out = '<p>Stats<br/>' +
             'Size: ' + width + 'x' + height + '<br/>' +
-            'Step size: ' + stepSize + '<br/>' +
             'Steps generated: ' + steps + '<br />' +
             'Time: ' + time + ' milliseconds</p>';
   document.getElementById('stats_print').innerHTML = out;
@@ -33,16 +32,16 @@ function getUIGenAs() {
   return document.getElementById('genAsTable').checked;
 }
 
+function getUIGenAlgorithm() {
+  return document.getElementById('genAlgorithm').value;
+}
+
 function getUIWidth() {
   return +document.getElementById('x_input').value;
 }
 
 function getUIHeight() {
   return +document.getElementById('y_input').value;
-}
-
-function getUIStepSize() {
-  return +document.getElementById('step_input').value;
 }
 
 function getUIStepSpeed() {
@@ -77,11 +76,10 @@ function prepareUI() {
       startX = getUIStartX(),
       startY = getUIStartY(),
       width = getUIWidth(),
-      height = getUIHeight(),
-      stepSize = getUIStepSize();
+      height = getUIHeight();
 
   // Check parameters
-  if (startX >= width || startX < 0 || startY >= height || startY < 0 || stepSize < 1) {
+  if (startX >= width || startX < 0 || startY >= height || startY < 0) {
     alert('Start coordinates should be between 1 and 1000, step size should be at least 1');
     throw RangeError('Start coordinates should be between 1 and 1000, step size should be at least 1');
   }
@@ -97,8 +95,12 @@ function prepareUI() {
 }
 
 function generateMaze() {
-  var my_maze = new Maze(getUIWidth(), getUIHeight(), getUIStepSize());
-  my_maze.run(getUIStartX(), getUIStartY());
+  var my_maze = new Maze(getUIWidth(), getUIHeight());
+  if (getUIGenAlgorithm() === 'd') {
+    my_maze.run(1, getUIStartX(), getUIStartY());
+  } else {
+    my_maze.run(2);
+  }
 
   if (getUIGenType() == G_INSTANT) {
     if (getUIGenAs()) {
@@ -107,10 +109,10 @@ function generateMaze() {
       my_maze.printInstant();
     }
   } else {
-    my_maze.printStepByStep(my_maze.getXPath(), my_maze.getYPath(), getUIStepSpeed());
+    my_maze.printStepByStep(getUIStepSpeed());
   }
 
-  printStats(my_maze.width, my_maze.height, my_maze.stepSize, my_maze.getStepCtx(), my_maze.getTime());   
+  printStats(my_maze.width, my_maze.height, my_maze.getStepCtx(), my_maze.getTime());   
 }
 
 function run() {

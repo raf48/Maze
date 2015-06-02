@@ -14,7 +14,6 @@
 	  <input type="text" id="start_y" size="1" maxlength="3" value="1" /><br />
       Size: <input type="text" name="size_input" id="x_input" size="1" maxlength="3" value="9" /> x
       <input type="text" name="size_input" id="y_input" size="1" maxlength="3" value="9" /><br />
-      Step size: <input type="text" name="step_input" id="step_input" size="1" maxlength="2" value="2" /><br />
       Generation type: <br />
       <input type="radio" name="genType" value="0" checked="checked" />Instant
       <input type="checkbox" id="genAsTable" />as HTML table<br />
@@ -25,6 +24,12 @@
         <option value="normal" selected="selected">normal</option>
         <option value="fast">fast</option>
         <option value="ultra">ultra fast</option>
+      </select>
+      <br />
+      Generation algorithm:
+      <select id="genAlgorithm">
+        <option value="d" selected="selected">Depth-first search</option>
+        <option value="k">Kruskal's algorithm</option>
       </select>
       <br />
       <button onclick="run()">Generate maze</button>
