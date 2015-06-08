@@ -1,0 +1,35 @@
+table.output td {
+  text-align: left;
+  padding: 0px;
+  padding-right: 15px;
+}
+canvas#mazeCanvas {
+  text-align: center;
+  border: 1px solid black;
+  border-spacing: 0rem;
+  background-color: black;
+}
+table.mazeTable {
+  text-align: center;
+  border: 1px solid black;
+  border-spacing: 0rem;
+  padding: 0px;
+  margin: 0px;
+}
+table.mazeTable td {
+  padding: 0px;
+  width: 10px;
+  height: 10px;
+}
+.route {
+  color: red;
+}
+.wall {
+  background-color: black;
+}
+td#controlls {
+  vertical-align: middle;
+}
+td#stats_print {
+  vertical-align: bottom;
+}
