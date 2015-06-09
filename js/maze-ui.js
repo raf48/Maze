@@ -1,5 +1,6 @@
 var G_INSTANT = 0,
-    G_STEP_BY_STEP = 1;
+    G_STEP_BY_STEP = 1,
+    my_maze;
 
 function printStats(width, height, steps, time) {
   var out = '<p>Stats<br/>' +
@@ -44,6 +45,10 @@ function getUIHeight() {
   return +document.getElementById('y_input').value;
 }
 
+function getUIThinWalls() {
+  return document.getElementById('thinWalls').checked;
+}
+
 function getUIStepSpeed() {
   var speed = document.getElementById('step_speed').value;
    
@@ -79,7 +84,8 @@ function prepareUI() {
       x = getUIStartX(),
       y = getUIStartY(),
       width = getUIWidth(),
-      height = getUIHeight();
+      height = getUIHeight(),
+      btnSolveMaze = document.getElementById('solveMaze');
 
   // Check parameters
   if (x >= width || x < 0 || y >= height || y < 0) {
@@ -107,19 +113,24 @@ function prepareUI() {
     startX.disabled = false;
     startY.disabled = false;
   });
+  btnSolveMaze.addEventListener('click', function() {
+    if (my_maze.getPrintStatus()) {
+      solveMaze();
+    }
+  });
 }
 
 function generateMaze() {
-  var my_maze = new Maze(getUIWidth(), getUIHeight());
+  my_maze = new Maze(getUIWidth(), getUIHeight());
   switch (getUIGenAlgorithm()) {
   case 'd':
-    my_maze.run(1, getUIStartX(), getUIStartY());
+    my_maze.generate(1, getUIStartX(), getUIStartY());
     break;
   case 'k':
-    my_maze.run(2);
+    my_maze.generate(2);
     break;
   default :
-    my_maze.run(3, getUIStartX(), getUIStartY());
+    my_maze.generate(3, getUIStartX(), getUIStartY());
     break;
   }
 
@@ -127,16 +138,20 @@ function generateMaze() {
     if (getUIGenAs()) {
         my_maze.printInstantAsTable();
     } else {
-      my_maze.printInstant();
+      my_maze.printInstant(getUIThinWalls());
     }
   } else {
     my_maze.printStepByStep(getUIStepSpeed());
   }
 
-  printStats(my_maze.width, my_maze.height, my_maze.getStepCtx(), my_maze.getTime());   
+  printStats(my_maze.width, my_maze.height, my_maze.getStepCtx(), my_maze.getTime());
 }
 
 function runMaze() {
   prepareUI();
   generateMaze();
+}
+
+function solveMaze() {
+  my_maze.solve();
 }
