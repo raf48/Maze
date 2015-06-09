@@ -32,9 +32,10 @@ Array.prototype.shuffle = Array.prototype.shuffle || function() {
 var Maze = function(width, height) {
   var matrix = Array.matrix(width, height, 0),
       time,     /* The running time of this algorithm */
-      solution; /* Generated solution, returned by the algorithm */ 
+      solution, /* Generated solution, returned by the algorithm */
+      printed;  /* Depicts whether maze drawing proccess has finished */
 
-  this.run = function(algorithm, x, y) {
+  this.generate = function(algorithm, x, y) {
     var startTime = Date.now();
     if (algorithm === 1) {
       solution = generateD(width, height, matrix, y, x);
@@ -45,9 +46,17 @@ var Maze = function(width, height) {
     }
     time = (Date.now() - startTime)*0.001;
   };
+  
+  this.solve = function(algorithm) {
+    solve(matrix);
+  }
 
   this.getTime = function() {
     return time;
+  };
+  
+  this.getPrintStatus = function() {
+    return printed;
   };
 
   this.getStepCtx = function() {
@@ -60,8 +69,8 @@ var Maze = function(width, height) {
     var out = document.getElementById('output');
 
     canvas.id = 'mazeCanvas';
-    canvas.height = (thinWalls) ? height*9.25 : height*10;
-    canvas.width = (thinWalls) ? width*9.25 : width*10;
+    canvas.height = (thinWalls) ? height*10 : height*10;
+    canvas.width = (thinWalls) ? width*10 : width*10;
     ctx.fillStyle = 'white';
 
     out.innerHTML = '';
@@ -75,8 +84,8 @@ var Maze = function(width, height) {
     return ctx;
   };
 
-  this.printInstant = function() {
-    var ctx = prepareCanvas(), i = 0;
+  this.printInstant = function(thinWalls) {
+    var ctx = prepareCanvas(thinWalls), i = 0;
     while (1) {
       if (i < solution.x.length) {
         ctx.fillRect(solution.y[i]*10, solution.x[i]*10, 10, 10);
@@ -90,12 +99,14 @@ var Maze = function(width, height) {
   /* Same as printInstant, only wrapped inside a setInterval() */
   this.printStepByStep = function(speed) {
     var ctx = prepareCanvas(), i = 0;
+    printed = false;
     var int = setInterval(function() {
       if (i < solution.x.length) {
         ctx.fillRect(solution.y[i]*10, solution.x[i]*10, 10, 10);
         i++;
       } else {
         clearInterval(int);
+        printed = true;
       };
     }, speed || 100);
   };
