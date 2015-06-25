@@ -74,11 +74,11 @@ function generateP(width, height, matrix, startX, startY) {
   /* While there are walls in the list */
   while (wallList.length) {
     /* Pick a random wall from the list */
-    w = wallList.splice(Math.floor(Math.random() * wallList.length),1)[0];
+    w = wallList.splice(Math.floor(Math.random() * wallList.length), 1)[0];
     /* Find if the opposite cell has not yet been visited,
      * add it's coordinates to the output stack,
-     * add neighboring walls of the cell to the wall list */
-    if (!w.left.visited || !w.right.visited) {
+     * add neighboring walls of the cell to the wall list. */
+    if (w !== 0 && (!w.left.visited || !w.right.visited)) {
       tmpCell = (!w.left.visited) ? w.left : w.right;
       tmpCell.visited = true;
       x_coords_out.push(w.y, tmpCell.y);
