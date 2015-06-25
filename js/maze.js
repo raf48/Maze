@@ -31,46 +31,58 @@ Array.prototype.shuffle = Array.prototype.shuffle || function() {
 /* Main object */
 var Maze = function(width, height) {
   var matrix = Array.matrix(width, height, 0),
-      time,     /* The running time of this algorithm */
-      solution, /* Generated solution, returned by the algorithm */
-      printed;  /* Depicts whether maze drawing proccess has finished */
+      genTime,     /* Running time of maze generation algorithm */
+      solveTime,   /* Running time of maze solution finding algorithm */
+      maze,        /* Generated maze, returned by the algorithm */
+      solution,    /* Solved maze, path from start point to finish */
+      printed,     /* Depicts whether maze drawing proccess has finished */
+      solutionLength; /* Solution step counter */
+
+  this.width = width;
+  this.height = height;
 
   this.generate = function(algorithm, x, y) {
     var startTime = Date.now();
     if (algorithm === 1) {
-      solution = generateD(width, height, matrix, y, x);
+      maze = generateD(width, height, matrix, y, x);
     } else if (algorithm === 2) {
-      solution = generateK(width, height, matrix);
+      maze = generateK(width, height, matrix);
     } else if (algorithm === 3) {
-      solution = generateP(width, height, matrix, y, x);
+      maze = generateP(width, height, matrix, y, x);
     }
-    time = (Date.now() - startTime)*0.001;
-  };
+    genTime = (Date.now() - startTime)*0.001;
+  }
   
-  this.solve = function(algorithm) {
-    solve(matrix);
+  this.solve = function() {
+    var startTime = Date.now();
+    solution = solve(maze, width, height);
+    solveTime = (Date.now() - startTime)*0.001;
   }
 
-  this.getTime = function() {
-    return time;
+  this.getGenTime = function() {
+    return genTime;
   };
-  
+
+  this.getSolveTime = function() {
+    return solveTime;
+  };
+ 
   this.getPrintStatus = function() {
     return printed;
   };
-
-  this.getStepCtx = function() {
-    return solution.x.length;
+  
+  this.getSolutionStepCtx = function() {
+    return solutionLength;
   };
 
-  function prepareCanvas(thinWalls) {
+  function prepareCanvas() {
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     var out = document.getElementById('output');
 
     canvas.id = 'mazeCanvas';
-    canvas.height = (thinWalls) ? height*10 : height*10;
-    canvas.width = (thinWalls) ? width*10 : width*10;
+    canvas.height = height*6;
+    canvas.width = width*6;
     ctx.fillStyle = 'white';
 
     out.innerHTML = '';
@@ -84,16 +96,18 @@ var Maze = function(width, height) {
     return ctx;
   };
 
-  this.printInstant = function(thinWalls) {
-    var ctx = prepareCanvas(thinWalls), i = 0;
+  this.printInstant = function() {
+    var ctx = prepareCanvas(), i = 0;
+    printed = false;
     while (1) {
-      if (i < solution.x.length) {
-        ctx.fillRect(solution.y[i]*10, solution.x[i]*10, 10, 10);
+      if (i < maze.x.length) {
+        ctx.fillRect(maze.y[i]*6, maze.x[i]*6, 6, 6);
         i++;
       } else {
         break;
       };
     }
+    printed = true;
   };
 
   /* Same as printInstant, only wrapped inside a setInterval() */
@@ -101,8 +115,8 @@ var Maze = function(width, height) {
     var ctx = prepareCanvas(), i = 0;
     printed = false;
     var int = setInterval(function() {
-      if (i < solution.x.length) {
-        ctx.fillRect(solution.y[i]*10, solution.x[i]*10, 10, 10);
+      if (i < maze.x.length) {
+        ctx.fillRect(maze.y[i]*6, maze.x[i]*6, 6, 6);
         i++;
       } else {
         clearInterval(int);
@@ -110,27 +124,24 @@ var Maze = function(width, height) {
       };
     }, speed || 100);
   };
+  
+  this.printSolution = function() {
+    /* Expect that canvas has already been created */
+    var canvas = document.getElementById('mazeCanvas'),
+        ctx = canvas.getContext('2d'),
+        i, j;
 
-  this.printInstantAsTable = function() {
-    var out = '<table class="mazeTable">',
-        i, j, outMatrix = new Array.matrix(width, height, 0);
-
-    /* Fill matrix with generated values */
-    for (i = 0; i < solution.y.length; i++) {
-      outMatrix[solution.y[i]][solution.x[i]] = 1;
-    }
-
-    /* Fill table with matrix elements */
-    for (i = 0; i < outMatrix[0].length; i++) {
-      out += '<tr>';
-      for (j = 0; j < outMatrix.length; j++) {
-        out += outMatrix[j][i] ?
-          '<td class="route"></td>' :
-          '<td class="wall"></td>';
+    ctx.fillStyle = 'red';
+    solutionLength = 0;
+    for (i = 0; i < width; i++) {
+      for (j = 0; j < height; j++) {
+        if (typeof solution[i] !== 'undefined' && 
+            typeof solution[i][j] !== 'undefined' && 
+            solution[i][j].visited === 1) {
+          solutionLength++;
+          ctx.fillRect(solution[i][j].x*6, solution[i][j].y*6, 6, 6);
+        }
       }
-      out += '</tr>';
     }
-    out += '</table>';
-    document.getElementById('output').innerHTML = out;
   };
 };
