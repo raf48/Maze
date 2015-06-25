@@ -2,20 +2,19 @@ var G_INSTANT = 0,
     G_STEP_BY_STEP = 1,
     my_maze;
 
-function printStats(width, height, steps, time) {
-  var out = '<p>Stats<br/>' +
+function printMazeInfo(width, height, time) {
+  var out = 'Generated maze:<br />' +
             'Size: ' + width + 'x' + height + '<br/>' +
-            'Steps generated: ' + steps + '<br />' +
-            'Time: ' + time + ' milliseconds</p>';
-  document.getElementById('stats_print').innerHTML = out;
-}
+            'Time: ' + time + ' milliseconds';
+  document.getElementById('stats_print').innerHTML = out;         
+  document.getElementById('path_print').innerHTML = '';
+}  
 
-function getUIStartX() {
-  return document.getElementById('start_x').value - 1;
-}
-
-function getUIStartY() {
-  return document.getElementById('start_y').value - 1;
+function printSolutionInfo(time, steps) {
+  var out = 'Found path:<br/>' +
+            'Length: ' + steps + '<br />' +
+            'Time: ' + time + ' milliseconds';
+  document.getElementById('path_print').innerHTML = out;
 }
 
 function getUIGenType() {
@@ -45,10 +44,6 @@ function getUIHeight() {
   return +document.getElementById('y_input').value;
 }
 
-function getUIThinWalls() {
-  return document.getElementById('thinWalls').checked;
-}
-
 function getUIStepSpeed() {
   var speed = document.getElementById('step_speed').value;
    
@@ -75,83 +70,66 @@ function getUIStepSpeed() {
 }
 
 function prepareUI() {
-  var genChkBox = document.getElementById('genAsTable'),
-      genSpeedList = document.getElementById('step_speed'),
+  var genSpeedList = document.getElementById('step_speed'),
       genType = document.getElementsByName('genType'),
       genAlgorithm = document.getElementById('genAlgorithm'),
-      startX = document.getElementById('start_x'),
-      startY = document.getElementById('start_y'),
-      x = getUIStartX(),
-      y = getUIStartY(),
       width = getUIWidth(),
       height = getUIHeight(),
-      btnSolveMaze = document.getElementById('solveMaze');
+      btnSolveMaze = document.getElementById('solveMaze'),
+      btnGenerateMaze = document.getElementById('generateMaze');
 
-  // Check parameters
-  if (x >= width || x < 0 || y >= height || y < 0) {
-    alert('Start coordinates should be between 1 and 1000, step size should be at least 1');
-    throw RangeError('Start coordinates should be between 1 and 1000, step size should be at least 1');
+  /* Check parameters */
+  if (width < 3 || height < 3) {
+    alert('Maze height and width should be more than 3');
+    throw RangeError('Maze height and width should be more than 3');
   }
-  // Add listeners
+
+  /* Add listeners */
   genType[G_INSTANT].addEventListener('click', function() {
     genSpeedList.disabled = true;
-    genChkBox.disabled = false;
   });
   genType[G_STEP_BY_STEP].addEventListener('click', function() {
     genSpeedList.disabled = false;
-    genChkBox.disabled = true;
   });
-  genAlgorithm[0].addEventListener('click', function() {
-    startX.disabled = false;
-    startY.disabled = false;
-  });
-  genAlgorithm[1].addEventListener('click', function() {
-    startX.disabled = true;
-    startY.disabled = true;
-  });
-  genAlgorithm[2].addEventListener('click', function() {
-    startX.disabled = false;
-    startY.disabled = false;
+  btnGenerateMaze.addEventListener('click', function() {
+    generateMaze();
   });
   btnSolveMaze.addEventListener('click', function() {
-    if (my_maze.getPrintStatus()) {
-      solveMaze();
+    /* When maze has been drawn, then we can solve it */
+    return function() {
+      if (my_maze.getPrintStatus()) {
+        my_maze.solve();
+        my_maze.printSolution();
+        printSolutionInfo(my_maze.getSolveTime(), my_maze.getSolutionStepCtx());
+      }
     }
-  });
+  }(my_maze));
 }
 
 function generateMaze() {
   my_maze = new Maze(getUIWidth(), getUIHeight());
   switch (getUIGenAlgorithm()) {
   case 'd':
-    my_maze.generate(1, getUIStartX(), getUIStartY());
+    my_maze.generate(1, 0, 0);
     break;
   case 'k':
     my_maze.generate(2);
     break;
   default :
-    my_maze.generate(3, getUIStartX(), getUIStartY());
+    my_maze.generate(3, 0, 0);
     break;
   }
 
   if (getUIGenType() == G_INSTANT) {
-    if (getUIGenAs()) {
-        my_maze.printInstantAsTable();
-    } else {
-      my_maze.printInstant(getUIThinWalls());
-    }
+    my_maze.printInstant();
   } else {
     my_maze.printStepByStep(getUIStepSpeed());
   }
 
-  printStats(my_maze.width, my_maze.height, my_maze.getStepCtx(), my_maze.getTime());
+  printMazeInfo(my_maze.width, my_maze.height, my_maze.getGenTime());
 }
 
-function runMaze() {
+function loadMaze() {
   prepareUI();
   generateMaze();
-}
-
-function solveMaze() {
-  my_maze.solve();
 }
