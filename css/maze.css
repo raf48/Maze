@@ -1,15 +1,24 @@
 table.output td {
   text-align: left;
+<<<<<<< HEAD
   padding: 0;
   margin: 0;
 }
 canvas#mazeCanvas {
+=======
+  padding: 0px;
+  padding-right: 15px;;
+}
+canvas#mazeCanvas {
+  text-align: center;
+>>>>>>> First pages commit
   border: 1px solid black;
   border-spacing: 0rem;
   background-color: black;
 }
 td#controlls {
   vertical-align: middle;
+<<<<<<< HEAD
   padding-left: 5px;
 }
 div#maze_stats{
@@ -18,4 +27,13 @@ div#maze_stats{
 }
 div#solve_stats {
   height: 40px;
+=======
+}
+td#stats_print {
+  vertical-align: middle;
+  height: 70px;
+}
+td#path_print {
+  height: 70px;
+>>>>>>> First pages commit
 }

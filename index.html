@@ -4,13 +4,19 @@
   <meta charset="utf-8">
   <title>Maze</title>
   <link href="css/maze.css" rel="stylesheet" type="text/css" />
+<<<<<<< HEAD
   <script src="js/maze-2d.js" type="text/javascript"></script>
   <script src="js/maze-eller.js" type="text/javascript"></script>
+=======
+
+  <script src="js/maze.js" type="text/javascript"></script>
+>>>>>>> First pages commit
   <script src="js/maze-depth.js" type="text/javascript"></script>
   <script src="js/maze-kruskal.js" type="text/javascript"></script>
   <script src="js/maze-prim.js" type="text/javascript"></script>
   <script src="js/maze-solve.js" type="text/javascript"></script>
   <script src="js/maze-ui.js" type="text/javascript"></script>
+<<<<<<< HEAD
   <script src="js/printer.js" type="text/javascript"></script>
   <script src="js/util.js" type="text/javascript"></script>
 </head>
@@ -50,6 +56,44 @@
         <div id="solve_stats"></div>
       </td>
     </tr>
+=======
+</head>
+<body onLoad="loadMaze()">
+  <table class="output">
+  <tr>
+    <td rowspan="3" id="output"></td>
+    <td id="controlls">
+      Size: <input type="text" name="size_input" id="x_input" size="1" maxlength="3" value="9" /> x
+      <input type="text" name="size_input" id="y_input" size="1" maxlength="3" value="9" /><br />
+      Generation type: <br />
+      <input type="radio" name="genType" value="0" checked="checked" />Instant<br />
+      <input type="radio" name="genType" value="1" />Step by step, speed:
+      <select id="step_speed" disabled="disabled">
+        <option value="very_slow">very slow</option>
+        <option value="slow">slow</option>
+        <option value="normal" selected="selected">normal</option>
+        <option value="fast">fast</option>
+        <option value="ultra">ultra fast</option>
+      </select>
+      <br />
+      Generation algorithm:
+      <select id="genAlgorithm">
+        <option value="d" selected="selected">Depth-first search</option>
+        <option value="k">Kruskal's algorithm</option>
+        <option value="p">Prim's algorithm</option>
+      </select>
+	  <br />
+      <button id="generateMaze">Generate maze</button>
+      <button id="solveMaze">Solve maze</button>
+    </td>
+  </tr>
+  <tr>
+    <td id="stats_print"></td>
+  </tr>                 
+  <tr>                  
+    <td id="path_print"></td>
+  </tr>
+>>>>>>> First pages commit
   </table>
 </body>
 </html>
