@@ -1,6 +1,6 @@
 # Maze generator
 
-Simple JavaScript maze generator app with step by step animation and different generation algorithms.
+Simple JavaScript maze generator app with step by step animation and different generation algorithms. Only standard mazes (containing no loops) can be generated.
 
 [Click here for a demo](http://raf48.github.io/Maze/)
 
