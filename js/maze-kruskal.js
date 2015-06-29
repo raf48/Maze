@@ -3,12 +3,14 @@ generation */
 function generateK(width, height, matrix) {
 
   var x_coords_out = [],  /* Array used to save generated x-axis coordinates */
-      y_coords_out = [];  /* Array used to save generated y-axis coordinates */
+      y_coords_out = [],  /* Array used to save generated y-axis coordinates */
+      set = [],           /* Disjoint-set data structure */
+      wallList = [],      /* A list of walls */
+      w;                  /* Wall iterator */
 
   function Set(x, y, n) {
     this.x = x;
     this.y = y;
-    /* Give each set a unique name */
     this.n = n;
   }
 
@@ -20,7 +22,7 @@ function generateK(width, height, matrix) {
   }
 
   function differentSets(left, right) {
-    return !(o[left.n].indexOf(right.n) > -1);
+    return !(set[left.n].indexOf(right.n) > -1);
   };
 
   function mergeSets(left, right) {
@@ -28,24 +30,31 @@ function generateK(width, height, matrix) {
         l = left.n,
         r = right.n;
 
-    o[l] = o[l].concat(o[r]);
-    i = o[r].length;
+    set[l] = set[l].concat(set[r]);
+    i = set[r].length;
     while (i--) {
-      o[o[r][i]] = o[l];
+      set[set[r][i]] = set[l];
     }
 
-    i = o[l].length;
+    i = set[l].length;
     while (i--) {
-      o[o[l][i]] = o[r];
+      set[set[l][i]] = set[r];
     }
   }
 
-  function makeSet(m) {
+  function makeSet(m, s) {
     var i, j, n = 0;
+    /* Create a set for each cell containing just that one cell,
+       give each set a unique name (n) */
     for (i = 0; i < m.length; i+=2) {
       for (j = 0; j < m[i].length; j+=2) {
         m[i][j] = new Set(i, j, n++);
       }
+    }
+
+    /* Fill disjoint-set with initial cell numbers */
+    for (i = 0; i < n; i++) {
+      s[i] = [i];
     }
   }
 
@@ -68,17 +77,11 @@ function generateK(width, height, matrix) {
     return arr;
   }
 
-  var o = [], wallList = [], w;
-  var i;
-
-  makeSet(matrix);
+  makeSet(matrix, set);
 
   wallList = createWalls(matrix);
+  /* Shuffle array of walls with Knuth shuffle */
   wallList.shuffle();
-
-  for (i = 0; i < Math.floor(width*height/2); i++) {
-    o[i] = [i];
-  }
 
   /* While there are walls in the list */
   while (wallList.length) {
