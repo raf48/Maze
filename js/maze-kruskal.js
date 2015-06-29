@@ -1,4 +1,5 @@
-/* An implementation of randomized Kruskal's algorithm for 2-d maze generation */
+/* An implementation of randomized Kruskal's algorithm for 2-d maze
+generation */
 function generateK(width, height, matrix) {
 
   var x_coords_out = [],  /* Array used to save generated x-axis coordinates */
@@ -9,9 +10,6 @@ function generateK(width, height, matrix) {
     this.y = y;
     /* Give each set a unique name */
     this.n = n;
-
-    o[n] = {};
-    o[n][n] = true;
   }
 
   function Wall(x, y, left, right) {
@@ -22,20 +20,23 @@ function generateK(width, height, matrix) {
   }
 
   function differentSets(left, right) {
-    return !o[left.n][right.n];
+    return !(o[left.n].indexOf(right.n) > -1);
   };
 
   function mergeSets(left, right) {
-    var i, j;
-    for (i in o[right.n]) {
-      for (j in o[left.n]) {
-        o[i][j] = true;
-      }
+    var i,
+        l = left.n,
+        r = right.n;
+
+    o[l] = o[l].concat(o[r]);
+    i = o[r].length;
+    while (i--) {
+      o[o[r][i]] = o[l];
     }
-    for (i in o[left.n]) {
-      for (j in o[right.n]) {
-        o[i][j] = true;
-      }
+
+    i = o[l].length;
+    while (i--) {
+      o[o[l][i]] = o[r];
     }
   }
 
@@ -43,9 +44,7 @@ function generateK(width, height, matrix) {
     var i, j, n = 0;
     for (i = 0; i < m.length; i+=2) {
       for (j = 0; j < m[i].length; j+=2) {
-        m[i][j] = new Set(i, j, ++n);
-        o[n] = {};
-        o[n][n] = true;
+        m[i][j] = new Set(i, j, n++);
       }
     }
   }
@@ -69,12 +68,17 @@ function generateK(width, height, matrix) {
     return arr;
   }
 
-  var o = {}, wallList = [], w;
+  var o = [], wallList = [], w;
+  var i;
 
   makeSet(matrix);
 
   wallList = createWalls(matrix);
   wallList.shuffle();
+
+  for (i = 0; i < Math.floor(width*height/2); i++) {
+    o[i] = [i];
+  }
 
   /* While there are walls in the list */
   while (wallList.length) {
