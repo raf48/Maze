@@ -28,10 +28,6 @@ function getUIGenType() {
   }
 }
 
-function getUIGenAs() {
-  return document.getElementById('genAsTable').checked;
-}
-
 function getUIGenAlgorithm() {
   return document.getElementById('genAlgorithm').value;
 }
@@ -69,21 +65,21 @@ function getUIStepSpeed() {
   }
 }
 
+  /* Check parameters */
+  if (getUIWidth() < 3 || getUIHeight() < 3) {
+    alert('Maze height and width should be more than 3');
+    throw RangeError('Maze height and width should be more than 3');
+  }
+}
+
 function prepareUI() {
   var genSpeedList = document.getElementById('step_speed'),
       genType = document.getElementsByName('genType'),
       genAlgorithm = document.getElementById('genAlgorithm'),
-      width = getUIWidth(),
-      height = getUIHeight(),
       btnSolveMaze = document.getElementById('solveMaze'),
       btnGenerateMaze = document.getElementById('generateMaze');
 
   /* Check parameters */
-  if (width < 3 || height < 3) {
-    alert('Maze height and width should be more than 3');
-    throw RangeError('Maze height and width should be more than 3');
-  }
-
   /* Add listeners */
   genType[G_INSTANT].addEventListener('click', function() {
     genSpeedList.disabled = true;
