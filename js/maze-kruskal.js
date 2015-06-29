@@ -1,5 +1,4 @@
-/* An implementation of randomized Kruskal's algorithm for 2-d maze
-generation */
+/* An implementation of randomized Kruskal's algorithm for 2-d maze generation */
 function generateK(width, height, matrix) {
 
   var x_coords_out = [],  /* Array used to save generated x-axis coordinates */
@@ -26,9 +25,9 @@ function generateK(width, height, matrix) {
   };
 
   function mergeSets(left, right) {
-    var i,
-        l = left.n,
-        r = right.n;
+    var l = left.n,
+        r = right.n,
+        i;
 
     set[l] = set[l].concat(set[r]);
     i = set[r].length;
