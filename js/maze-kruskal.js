@@ -76,6 +76,7 @@ function generateK(width, height, matrix) {
     return arr;
   }
 
+  /* Fill matrix, initialize set */
   makeSet(matrix, set);
 
   wallList = createWalls(matrix);
