@@ -11,3 +11,7 @@ Maze is generated using one of the following algorithms: "depth-first search", "
 ## Solving the maze
 
 Maze solving is implemented with backtracking.
+
+## Known bugs
+
+Sometimes you will get "too much recursion" error when generating big mazes (size > 100) with depth-first search algorithm.
