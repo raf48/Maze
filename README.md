@@ -6,12 +6,8 @@ Simple JavaScript maze generator app with step by step animation and different g
 
 ## Maze generation
 
-Maze is generated using one of the following algorithms: "depth-first search", "Kruskal's" algorithm or "Prim's algorithm". Depth-first search is implemented with backtracking and recursion. Kruskal's algorithm is implemented with a disjoint-set data structure.
+Maze is generated using one of the following algorithms: "depth-first search", "Kruskal's" algorithm or "Prim's algorithm". Depth-first search is implemented with backtracking and a stack. Kruskal's algorithm is implemented with a disjoint-set data structure.
 
 ## Solving the maze
 
 Maze solving is implemented with backtracking.
-
-## Known bugs
-
-Sometimes you will get "too much recursion" error when generating big mazes (size > 100) with depth-first search algorithm.
