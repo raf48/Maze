@@ -30,8 +30,7 @@ Array.prototype.shuffle = Array.prototype.shuffle || function() {
 
 /* Main object */
 var Maze = function(width, height) {
-  var matrix = Array.matrix(width, height, 0),
-      genTime,     /* Running time of maze generation algorithm */
+  var genTime,     /* Running time of maze generation algorithm */
       solveTime,   /* Running time of maze solution finding algorithm */
       maze,        /* Generated maze, returned by the algorithm */
       solution,    /* Solved maze, path from start point to finish */
@@ -43,12 +42,17 @@ var Maze = function(width, height) {
 
   this.generate = function(algorithm, x, y) {
     var startTime = Date.now();
+
     if (algorithm === 1) {
-      maze = generateD(width, height, matrix, y, x);
+      maze = generateD(width, height, x, y);
     } else if (algorithm === 2) {
-      maze = generateK(width, height, matrix);
+      maze = generateK(width, height);
     } else if (algorithm === 3) {
-      maze = generateP(width, height, matrix, y, x);
+      maze = generateP(width, height, x, y);
+    } else if (algorithm === 4) {
+      maze = generateR(width, height, x, y);
+    } else if (algorithm === 5) {
+      maze = generateE(width, height);
     }
     genTime = (Date.now() - startTime)*0.001;
   }
@@ -60,11 +64,11 @@ var Maze = function(width, height) {
   }
 
   this.getGenTime = function() {
-    return genTime;
+    return genTime.toString().substr(0, 5);
   };
 
   this.getSolveTime = function() {
-    return solveTime;
+    return solveTime.toString().substr(0, 5);
   };
  
   this.getPrintStatus = function() {
@@ -81,8 +85,8 @@ var Maze = function(width, height) {
     var out = document.getElementById('output');
 
     canvas.id = 'mazeCanvas';
-    canvas.height = height*6;
-    canvas.width = width*6;
+    canvas.height = height*5;
+    canvas.width = width*5;
     ctx.fillStyle = 'white';
 
     out.innerHTML = '';
@@ -92,15 +96,11 @@ var Maze = function(width, height) {
   };
 
   this.printInstant = function() {
-    var ctx = prepareCanvas(), i = 0;
+    var ctx = prepareCanvas(), i = 0, l = maze.x.length;
     printed = false;
-    while (1) {
-      if (i < maze.x.length) {
-        ctx.fillRect(maze.y[i]*6, maze.x[i]*6, 6, 6);
-        i++;
-      } else {
-        break;
-      };
+    while (i < l) {
+      ctx.fillRect(maze.x[i]*5, maze.y[i]*5, 5, 5);
+      i++;
     }
     printed = true;
   };
@@ -113,16 +113,14 @@ var Maze = function(width, height) {
       if (i < maze.x.length) {
         j = speed;
         while(j--) {
-          ctx.fillRect(maze.y[i]*6, maze.x[i]*6, 6, 6);
+          ctx.fillRect(maze.x[i]*5, maze.y[i]*5, 5, 5);
           i++;
         }
       } else {
         return printed = true;
       }
-
       window.requestAnimationFrame(step);
     }
-
     window.requestAnimationFrame(step);
   };
  
@@ -140,7 +138,7 @@ var Maze = function(width, height) {
             typeof solution[i][j] !== 'undefined' &&
             solution[i][j].visited === 1) {
           solutionLength++;
-          ctx.fillRect(solution[i][j].x*6, solution[i][j].y*6, 6, 6);
+          ctx.fillRect(solution[i][j].x*5, solution[i][j].y*5, 5, 5);
         }
       }
     }
