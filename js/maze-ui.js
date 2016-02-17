@@ -1,5 +1,5 @@
-var G_INSTANT = 0,
-    G_STEP_BY_STEP = 1,
+var INSTANT = 0,
+    STEP_BY_STEP = 1,
     my_maze;
 
 function printMazeInfo(width, height, time) {
@@ -33,11 +33,11 @@ function getUIGenAlgorithm() {
 }
 
 function getUIWidth() {
-  return +document.getElementById('x_input').value;
+  return 2*document.getElementById('x_input').value - 1;
 }
 
 function getUIHeight() {
-  return +document.getElementById('y_input').value;
+  return 2*document.getElementById('y_input').value - 1;
 }
 
 function getUIStepSpeed() {
@@ -67,9 +67,9 @@ function getUIStepSpeed() {
 
 function UIChkParams() {
   /* Check parameters */
-  if (getUIWidth() < 3 || getUIHeight() < 3) {
-    alert('Maze height and width should be more than 3');
-    throw RangeError('Maze height and width should be more than 3');
+  if (getUIWidth() < 2 || getUIHeight() < 2) {
+    alert('Maze height and width should be more than 2');
+    throw RangeError('Maze height and width should be more than 2');
   }
 }
 
@@ -77,13 +77,17 @@ function prepareUI() {
   var genSpeedList = document.getElementById('step_speed'),
       genType = document.getElementsByName('genType'),
       btnSolveMaze = document.getElementById('solveMaze'),
-      btnGenerateMaze = document.getElementById('generateMaze');
+      btnGenerateMaze = document.getElementById('generateMaze'),
+      rangeX = document.getElementById('x_range'),
+      rangeY = document.getElementById('y_range'),
+      inputX = document.getElementById('x_input'),
+      inputY = document.getElementById('y_input');
 
   /* Add listeners */
-  genType[G_INSTANT].addEventListener('click', function() {
+  genType[INSTANT].addEventListener('click', function() {
     genSpeedList.disabled = true;
   });
-  genType[G_STEP_BY_STEP].addEventListener('click', function() {
+  genType[STEP_BY_STEP].addEventListener('click', function() {
     genSpeedList.disabled = false;
   });
   btnGenerateMaze.addEventListener('click', function() {
@@ -99,6 +103,18 @@ function prepareUI() {
       }
     }
   }(my_maze));
+  rangeX.addEventListener('input', function() {
+    inputX.value = this.value;
+  });
+  rangeY.addEventListener('input', function() {
+    inputY.value = this.value;
+  });
+  inputX.addEventListener('input', function() {
+    rangeX.value = this.value;
+  });
+  inputY.addEventListener('input', function() {
+    rangeY.value = this.value;
+  });
 }
 
 function generateMaze() {
@@ -112,18 +128,25 @@ function generateMaze() {
   case 'k':
     my_maze.generate(2);
     break;
-  default :
+  case 'p':
     my_maze.generate(3, 0, 0);
+    break;
+  case 'r':
+    my_maze.generate(4, 0, 0);
+    break;
+  default:
+    my_maze.generate(5);
     break;
   }
 
-  if (getUIGenType() == G_INSTANT) {
+  if (getUIGenType() == INSTANT) {
     my_maze.printInstant();
   } else {
     my_maze.printStepByStep(getUIStepSpeed());
   }
 
   printMazeInfo(my_maze.width, my_maze.height, my_maze.getGenTime());
+  console.log('time:', my_maze.getGenTime());
 }
 
 function loadMaze() {
