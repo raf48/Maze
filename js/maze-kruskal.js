@@ -1,8 +1,9 @@
 /* An implementation of randomized Kruskal's algorithm for 2-d maze generation */
-function generateK(width, height, matrix) {
+function generateK(width, height) {
 
   var x_coords_out = [],  /* Array used to save generated x-axis coordinates */
       y_coords_out = [],  /* Array used to save generated y-axis coordinates */
+      matrix = Array.matrix(width, height, 0), /* 2-dimentional array */
       set = [],           /* Disjoint-set data structure */
       wallList = [],      /* A list of walls */
       w;                  /* Wall iterator */
@@ -21,23 +22,16 @@ function generateK(width, height, matrix) {
   }
 
   function differentSets(left, right) {
-    return !(set[left.n].indexOf(right.n) > -1);
+    return !(set[left].indexOf(right) > -1);
   };
 
   function mergeSets(left, right) {
-    var l = left.n,
-        r = right.n,
-        i;
+    var i;
+    set[left] = set[left].concat(set[right]);
 
-    set[l] = set[l].concat(set[r]);
-    i = set[r].length;
+    i = set[left].length;
     while (i--) {
-      set[set[r][i]] = set[l];
-    }
-
-    i = set[l].length;
-    while (i--) {
-      set[set[l][i]] = set[r];
+      set[set[left][i]] = set[left];
     }
   }
 
@@ -87,10 +81,10 @@ function generateK(width, height, matrix) {
   while (wallList.length) {
     w = wallList.pop();
     /* If cells belong to different sets then merge those two sets */
-    if (differentSets(w.left, w.right)) {
-      mergeSets(w.left, w.right);
-      x_coords_out.push(w.left.y, w.y, w.right.y);
-      y_coords_out.push(w.left.x, w.x, w.right.x);
+    if (differentSets(w.left.n, w.right.n)) {
+      mergeSets(w.left.n, w.right.n);
+      x_coords_out.push(w.left.x, w.x, w.right.x);
+      y_coords_out.push(w.left.y, w.y, w.right.y);
     }
   }
 
