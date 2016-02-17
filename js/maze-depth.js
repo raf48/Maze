@@ -1,10 +1,12 @@
-/* An implementation of depth-first search algorithm for 2-d maze generation */
+/* An implementation of depth-first search algorithm with stack for 2-d maze generation */
 function generateD(width, height, matrix, startX, startY) {
 
   var x_coords_out = [],  /* Array used to save generated x-axis coordinates */
       y_coords_out = [],  /* Array used to save generated y-axis coordinates */
-      x_back = [],  /* Array used for backward walking the x-axis */
-      y_back = [],  /* Array used for backward walking the y-axis */
+      x_back = [],        /* Array used for backward walking the x-axis */
+      y_back = [],        /* Array used for backward walking the y-axis */
+      current = { x : startX, y : startY },  /* Current position holder */
+      back = false,
       G_LEFT = 0,
       G_RIGHT = 1,
       G_DOWN = 2,
@@ -33,11 +35,11 @@ function generateD(width, height, matrix, startX, startY) {
   }
 
   /* Find a random direction to move. If it's not possible to move return -1 */
-  function findDirection(coords) {
+  function findDirection() {
     var direction = randomDirection(),
         exceptions = [];
 
-    while (!notBlocking(direction, coords)) {
+    while (!notBlocking(direction)) {
       if (exceptions.length === 3) {
         return -1;
       }
@@ -49,83 +51,90 @@ function generateD(width, height, matrix, startX, startY) {
   }
 
   /* Check's if we can move in that particular direction */
-  function notBlocking(direction, coords) {
+  function notBlocking(direction) {
     if (direction === G_LEFT) {
-      return coords.cy - G_STEP_SIZE >= 0 && matrix[coords.cy - G_STEP_SIZE][coords.cx] === 0;
+      return current.y - G_STEP_SIZE >= 0 && matrix[current.y - G_STEP_SIZE][current.x] === 0;
     } else if (direction === G_RIGHT) {
-      return coords.cy + G_STEP_SIZE < width && matrix[coords.cy + G_STEP_SIZE][coords.cx] === 0;
+      return current.y + G_STEP_SIZE < width && matrix[current.y + G_STEP_SIZE][current.x] === 0;
     } else if (direction === G_DOWN) {
-      return coords.cx + G_STEP_SIZE < height && matrix[coords.cy][coords.cx + G_STEP_SIZE] === 0;
+      return current.x + G_STEP_SIZE < height && matrix[current.y][current.x + G_STEP_SIZE] === 0;
     } else {
-      return coords.cx - G_STEP_SIZE >= 0 && matrix[coords.cy][coords.cx - G_STEP_SIZE] === 0;
+      return current.x - G_STEP_SIZE >= 0 && matrix[current.y][current.x - G_STEP_SIZE] === 0;
     }
   }
 
   /* Move in particular direction, mark walked steps as visited */
-  function move(direction, coords) {
+  function move(direction) {
     var x = 0, y = 0, sign, i;
 
-    if (direction === G_LEFT) {
+    switch (direction) {
+    case G_LEFT:
       sign = -1;
       y = 1;
-    } else if (direction === G_RIGHT) {
+      break;
+    case G_RIGHT:
       sign = 1;
       y = 1;
-    } else if (direction === G_DOWN) {
+      break;
+    case G_DOWN:
       sign = 1;
       x = 1;
-    } else {
+      break;
+    default:
       sign = -1;
       x = 1;
+      break;
     }
+
     for (i = 0; i <= G_STEP_SIZE; i++) {
-      x_coords_out.push(coords.cx + (i*x*sign));
-      y_coords_out.push(coords.cy + (i*y*sign));
-      matrix[coords.cy + (i*y*sign)][coords.cx + (i*x*sign)] = 1;
+      x_coords_out.push(current.x + (i*x*sign));
+      y_coords_out.push(current.y + (i*y*sign));
+      matrix[current.y + (i*y*sign)][current.x + (i*x*sign)] = 1;
     }
-    coords.cx = coords.cx + (sign*x*G_STEP_SIZE);
-    coords.cy = coords.cy + (sign*y*G_STEP_SIZE);
+    current.x = current.x + (sign*x*G_STEP_SIZE);
+    current.y = current.y + (sign*y*G_STEP_SIZE);
   }
 
-  function walk(cx, cy) {
+  function walk() {
     var back = false,
-        coords = { cx : cx, cy : cy },
-        dir = findDirection(coords);
+        dir = findDirection();
 
     switch (dir) {
     case -1:
       back = true;
       break;
     case G_LEFT:
-      move(G_LEFT, coords);
+      move(G_LEFT);
       break;
     case G_RIGHT:
-      move(G_RIGHT, coords);
+      move(G_RIGHT);
       break;
     case G_DOWN:
-      move(G_DOWN, coords);
+      move(G_DOWN);
       break;
     case G_UP:
-      move(G_UP, coords);
+      move(G_UP);
       break;
     default:
       alert('Error! this should never happen...');
       break;
     }
 
-    if (!back || x_back.length) {
-      if (back) {
-        walk(x_back.pop(), y_back.pop());
-      } else {
-        x_back.push(coords.cx);
-        y_back.push(coords.cy);
-        walk(coords.cx, coords.cy);
-      }
-    }
+    return back;
   }
 
-  /* Start recursion */
-  walk(startX, startY);
+  /* Start looping */
+  while (!back || x_back.length) {
+    if (back) {
+      current.x = x_back.pop();
+      current.y = y_back.pop();
+      back = walk();
+    } else {
+      x_back.push(current.x);
+      y_back.push(current.y);
+      back = walk();
+    }
+  }
 
   /* Return generated solution as an object */
   return {
