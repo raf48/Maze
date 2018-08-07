@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /*
   An implementation of randomized Kruskal's algorithm for finding a
   minimum-spanning-tree using weighted quick-union with path compression
@@ -53,16 +54,20 @@ function genKruskal(width, height, out) {
       for (let j = 0; j < width - 1; j++) {
         walls.push({left: j + w, right: j + w + 1});
 =======
+=======
+>>>>>>> GH pages update
 /* An implementation of randomized Kruskal's algorithm for 2-d maze generation */
 function generateK(width, height, matrix) {
 
   var x_coords_out = [],  /* Array used to save generated x-axis coordinates */
-      y_coords_out = [];  /* Array used to save generated y-axis coordinates */
+      y_coords_out = [],  /* Array used to save generated y-axis coordinates */
+      set = [],           /* Disjoint-set data structure */
+      wallList = [],      /* A list of walls */
+      w;                  /* Wall iterator */
 
   function Set(x, y, n) {
     this.x = x;
     this.y = y;
-    /* Give each set a unique name */
     this.n = n;
 
     o[n] = {};
@@ -77,6 +82,7 @@ function generateK(width, height, matrix) {
   }
 
   function differentSets(left, right) {
+<<<<<<< HEAD
     return !o[left.n][right.n];
   };
 
@@ -91,17 +97,43 @@ function generateK(width, height, matrix) {
       for (j in o[right.n]) {
         o[i][j] = true;
       }
+=======
+    return !(set[left.n].indexOf(right.n) > -1);
+  };
+
+  function mergeSets(left, right) {
+    var l = left.n,
+        r = right.n,
+        i;
+
+    set[l] = set[l].concat(set[r]);
+    i = set[r].length;
+    while (i--) {
+      set[set[r][i]] = set[l];
+    }
+
+    i = set[l].length;
+    while (i--) {
+      set[set[l][i]] = set[r];
+>>>>>>> GH pages update
     }
   }
 
-  function makeSet(m) {
+  function makeSet(m, s) {
     var i, j, n = 0;
+    /* Create a set for each cell containing just that one cell,
+       give each set a unique name (n) */
     for (i = 0; i < m.length; i+=2) {
       for (j = 0; j < m[i].length; j+=2) {
         m[i][j] = new Set(i, j, ++n);
         o[n] = {};
         o[n][n] = true;
       }
+    }
+
+    /* Fill disjoint-set with initial cell numbers */
+    for (i = 0; i < n; i++) {
+      s[i] = [i];
     }
   }
 
@@ -159,11 +191,17 @@ function generateK(width, height, matrix) {
     return arr;
   }
 
+<<<<<<< HEAD
   var o = {}, wallList = [], w;
 
   makeSet(matrix);
+=======
+  /* Fill matrix, initialize set */
+  makeSet(matrix, set);
+>>>>>>> GH pages update
 
   wallList = createWalls(matrix);
+  /* Shuffle array of walls with Knuth shuffle */
   wallList.shuffle();
 
   /* While there are walls in the list */

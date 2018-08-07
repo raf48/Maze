@@ -239,9 +239,9 @@ function printMazeInfo(width, height, time) {
   var out = 'Generated maze:<br />' +
             'Size: ' + width + 'x' + height + '<br/>' +
             'Time: ' + time + ' milliseconds';
-  document.getElementById('stats_print').innerHTML = out;         
+  document.getElementById('stats_print').innerHTML = out;        
   document.getElementById('path_print').innerHTML = '';
-}  
+} 
 
 function printSolutionInfo(time, steps) {
   var out = 'Found path:<br/>' +
@@ -261,10 +261,6 @@ function getUIGenType() {
   }
 }
 
-function getUIGenAs() {
-  return document.getElementById('genAsTable').checked;
-}
-
 function getUIGenAlgorithm() {
   return document.getElementById('genAlgorithm').value;
 }
@@ -279,22 +275,22 @@ function getUIHeight() {
 
 function getUIStepSpeed() {
   var speed = document.getElementById('step_speed').value;
-   
+  
   switch (speed) {
   case 'very_slow':
-    return 500;
+    return 1;
     break;
   case 'slow':
-    return 100;
+    return 5;
     break;
   case 'normal':
-    return 50;
-    break;
-  case 'fast':
     return 20;
     break;
+  case 'fast':
+    return 100;
+    break;
   case 'ultra':
-    return 1;
+    return 500;
     break;
   default:
     return 0;
@@ -302,20 +298,19 @@ function getUIStepSpeed() {
   }
 }
 
-function prepareUI() {
-  var genSpeedList = document.getElementById('step_speed'),
-      genType = document.getElementsByName('genType'),
-      genAlgorithm = document.getElementById('genAlgorithm'),
-      width = getUIWidth(),
-      height = getUIHeight(),
-      btnSolveMaze = document.getElementById('solveMaze'),
-      btnGenerateMaze = document.getElementById('generateMaze');
-
+function UIChkParams() {
   /* Check parameters */
-  if (width < 3 || height < 3) {
+  if (getUIWidth() < 3 || getUIHeight() < 3) {
     alert('Maze height and width should be more than 3');
     throw RangeError('Maze height and width should be more than 3');
   }
+}
+
+function prepareUI() {
+  var genSpeedList = document.getElementById('step_speed'),
+      genType = document.getElementsByName('genType'),
+      btnSolveMaze = document.getElementById('solveMaze'),
+      btnGenerateMaze = document.getElementById('generateMaze');
 
   /* Add listeners */
   genType[G_INSTANT].addEventListener('click', function() {
@@ -340,6 +335,8 @@ function prepareUI() {
 }
 
 function generateMaze() {
+  /* Check parameters */
+  UIChkParams();
   my_maze = new Maze(getUIWidth(), getUIHeight());
   switch (getUIGenAlgorithm()) {
   case 'd':

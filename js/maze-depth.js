@@ -47,7 +47,7 @@ function genDFS(width, height, out, startX, startY) {
 =======
 /* An implementation of depth-first search algorithm for 2-d maze generation */
 function generateD(width, height, matrix, startX, startY) {
-  
+
   var x_coords_out = [],  /* Array used to save generated x-axis coordinates */
       y_coords_out = [],  /* Array used to save generated y-axis coordinates */
       x_back = [],  /* Array used for backward walking the x-axis */
@@ -136,7 +136,7 @@ function generateD(width, height, matrix, startX, startY) {
 
   function walk(cx, cy) {
     var back = false,
-        coords = { cx, cy },
+        coords = { cx : cx, cy : cy },
         dir = findDirection(coords);
 
     switch (dir) {

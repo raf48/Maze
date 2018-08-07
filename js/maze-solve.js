@@ -175,7 +175,7 @@ function solve(maze, width, height) {
   }
 
   /* Run path finding algorithm, pass starting coordinates as an object */
-  run({cx, cy});
+  run({ cx : cx, cy : cy});
   
   return new_maze;
 >>>>>>> First pages commit

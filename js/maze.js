@@ -52,7 +52,7 @@ var Maze = function(width, height) {
     }
     genTime = (Date.now() - startTime)*0.001;
   }
-  
+ 
   this.solve = function() {
     var startTime = Date.now();
     solution = solve(maze, width, height);
@@ -70,7 +70,7 @@ var Maze = function(width, height) {
   this.getPrintStatus = function() {
     return printed;
   };
-  
+ 
   this.getSolutionStepCtx = function() {
     return solutionLength;
   };
@@ -87,11 +87,6 @@ var Maze = function(width, height) {
 
     out.innerHTML = '';
     out.appendChild(canvas);
-
-    /* Clear possible previous intervals */
-    for (var i = 1; i < 99999; i++) {
-      window.clearInterval(i);
-    }
 
     return ctx;
   };
@@ -110,21 +105,27 @@ var Maze = function(width, height) {
     printed = true;
   };
 
-  /* Same as printInstant, only wrapped inside a setInterval() */
   this.printStepByStep = function(speed) {
-    var ctx = prepareCanvas(), i = 0;
+    var ctx = prepareCanvas(), i = 0, j;
     printed = false;
-    var int = setInterval(function() {
+
+    function step() {
       if (i < maze.x.length) {
-        ctx.fillRect(maze.y[i]*6, maze.x[i]*6, 6, 6);
-        i++;
+        j = speed;
+        while(j--) {
+          ctx.fillRect(maze.y[i]*6, maze.x[i]*6, 6, 6);
+          i++;
+        }
       } else {
-        clearInterval(int);
-        printed = true;
-      };
-    }, speed || 100);
+        return printed = true;
+      }
+
+      window.requestAnimationFrame(step);
+    }
+
+    window.requestAnimationFrame(step);
   };
-  
+ 
   this.printSolution = function() {
     /* Expect that canvas has already been created */
     var canvas = document.getElementById('mazeCanvas'),
@@ -135,8 +136,8 @@ var Maze = function(width, height) {
     solutionLength = 0;
     for (i = 0; i < width; i++) {
       for (j = 0; j < height; j++) {
-        if (typeof solution[i] !== 'undefined' && 
-            typeof solution[i][j] !== 'undefined' && 
+        if (typeof solution[i] !== 'undefined' &&
+            typeof solution[i][j] !== 'undefined' &&
             solution[i][j].visited === 1) {
           solutionLength++;
           ctx.fillRect(solution[i][j].x*6, solution[i][j].y*6, 6, 6);
