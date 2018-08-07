@@ -146,7 +146,7 @@ function solve(maze, width, height) {
 
   /* Fill maze with cells */
   for (i = 0; i < maze.y.length; i++) {
-    new_maze[maze.y[i]][maze.x[i]] = { x: maze.y[i], y: maze.x[i] };
+    new_maze[maze.x[i]][maze.y[i]] = { x: maze.x[i], y: maze.y[i] };
   }
 
   /* Set cells with available directions */

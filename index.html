@@ -5,15 +5,21 @@
   <title>Maze</title>
   <link href="css/maze.css" rel="stylesheet" type="text/css" />
 <<<<<<< HEAD
+<<<<<<< HEAD
   <script src="js/maze-2d.js" type="text/javascript"></script>
   <script src="js/maze-eller.js" type="text/javascript"></script>
 =======
 
   <script src="js/maze.js" type="text/javascript"></script>
 >>>>>>> First pages commit
+=======
+  <script src="js/maze.js" type="text/javascript"></script>
+  <script src="js/maze-eller.js" type="text/javascript"></script>
+>>>>>>> Refactored code
   <script src="js/maze-depth.js" type="text/javascript"></script>
   <script src="js/maze-kruskal.js" type="text/javascript"></script>
   <script src="js/maze-prim.js" type="text/javascript"></script>
+  <script src="js/maze-random.js" type="text/javascript"></script>
   <script src="js/maze-solve.js" type="text/javascript"></script>
   <script src="js/maze-ui.js" type="text/javascript"></script>
 <<<<<<< HEAD
@@ -63,9 +69,12 @@
   <tr>
     <td rowspan="3" id="output"></td>
     <td id="controlls">
-      Size: <input type="text" name="size_input" id="x_input" size="1" maxlength="3" value="51" /> x
-      <input type="text" name="size_input" id="y_input" size="1" maxlength="3" value="51" /><br />
-      Generation type: <br />
+      Size:<br />
+      <input type="range" id="x_range" value="50" min="2" />
+      <input type="text" name="size_input" id="x_input" size="1" maxlength="3" value="50" /> width<br />
+      <input type="range" id="y_range" value="50" min="2" />
+      <input type="text" name="size_input" id="y_input" size="1" maxlength="3" value="50" /> height<br />
+      Animation: <br />
       <input type="radio" name="genType" value="0" checked="checked" />Instant<br />
       <input type="radio" name="genType" value="1" />Step by step, speed:
       <select id="step_speed" disabled="disabled">
@@ -81,6 +90,8 @@
         <option value="d" selected="selected">Depth-first search</option>
         <option value="k">Kruskal's algorithm</option>
         <option value="p">Prim's algorithm</option>
+        <option value="r">Random traversal</option>
+        <option value="e">Eller's algorithm</option>
       </select>
 	  <br />
       <button id="generateMaze">Generate maze</button>
@@ -89,8 +100,8 @@
   </tr>
   <tr>
     <td id="stats_print"></td>
-  </tr>                 
-  <tr>                  
+  </tr>
+  <tr>
     <td id="path_print"></td>
   </tr>
 >>>>>>> First pages commit
