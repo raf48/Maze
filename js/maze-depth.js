@@ -1,120 +1,46 @@
-/* An implementation of depth-first search algorithm with stack for 2-d maze generation */
-function generateD(width, height, startX, startY) {
+/*
+  Depth-first search implementation with a stack for 2-D maze generation
+*/
+function genDFS(width, height, out, startX, startY) {
 
-  var x_coords_out = [],  /* Array used to save generated x-axis coordinates */
-      y_coords_out = [],  /* Array used to save generated y-axis coordinates */
-      x_back = [],        /* Array used for backward walking the x-axis */
-      y_back = [],        /* Array used for backward walking the y-axis */
-      current = { x : startX, y : startY },    /* Current position holder */
-      matrix = Array.matrix(width, height, 0), /* 2-dimentional array */
-      back = false,
-      LEFT = 0,
-      RIGHT = 1,
-      DOWN = 2;
+  // Current position holders
+  let current_x = startX;
+  let current_y = startY;
 
-  /* Pick a random direction.
-   * Optionally we can pass a list of exeptions (unwanted directions).
-   */
-  function randomDirection(except) {
-    var result = Math.floor(Math.random() * 4)
+  const backwards = []; // For backwards walking
+  let   back = false;   // Backwards indicator
 
-    if (typeof except === 'undefined') {
-      return result;
-    }
+  // Initialize 2-D maze with empty cells
+  const maze = new Maze2D(width, height);
 
-    /* If direction we just picked is in the exception list - pick another random direction */
-    for (var i = 0; i < except.length; i++) {
-      if (result === except[i]) {
-        result = randomDirection(except);
+  // Create a starting point
+  maze.visit(current_x, current_y);
+  out.addCell(current_x, current_y);
+
+  // Start walking
+  while (!back || backwards.length) {
+    const directions = maze.getDirections(current_x, current_y);
+
+    if (directions.length) {
+      let next;
+      // Push for backtrack only cells with multiple directions
+      if (directions.length > 1) {
+        backwards.push(current_x, current_y);
+        // Walk in random direction
+        next = directions.getRandom();
+      } else {
+        next = directions[0];
       }
-    }
-
-    return result;
-  }
-
-  /* Find a random direction to move. If it's not possible to move return -1 */
-  function findDirection() {
-    var direction = randomDirection(),
-        exceptions = [];
-
-    while (!notBlocking(direction)) {
-      if (exceptions.length === 3) {
-        return -1;
-      }
-      exceptions.push(direction);
-      direction = randomDirection(exceptions);
-    }
-
-    return direction;
-  }
-
-  /* Check's if we can move in that particular direction */
-  function notBlocking(direction) {
-    if (direction === LEFT) {
-      return current.x - 2 >= 0 && matrix[current.x - 2][current.y] === 0;
-    } else if (direction === RIGHT) {
-      return current.x + 2 < width && matrix[current.x + 2][current.y] === 0;
-    } else if (direction === DOWN) {
-      return current.y + 2 < height && matrix[current.x][current.y + 2] === 0;
+      back = false;
+      maze.visit(next[0], next[1]);
+      current_x = next[0];
+      current_y = next[1];
+      out.addCell(next[0], next[1], next[2]);
     } else {
-      return current.y - 2 >= 0 && matrix[current.x][current.y - 2] === 0;
+      // Go back
+      back = true;
+      current_y = backwards.pop();
+      current_x = backwards.pop();
     }
   }
-
-  /* Move in particular direction, mark walked steps as visited */
-  function move(direction) {
-    var x = 0, y = 0, sign;
-
-    switch (direction) {
-    case LEFT:
-      sign = -1;
-      x = 1;
-      break;
-    case RIGHT:
-      sign = 1;
-      x = 1;
-      break;
-    case DOWN:
-      sign = 1;
-      y = 1;
-      break;
-    default:
-      sign = -1;
-      y = 1;
-      break;
-    }
-
-    for (var i = 0; i <= 2; i++) {
-      x_coords_out.push(current.x + (i*x*sign));
-      y_coords_out.push(current.y + (i*y*sign));
-      matrix[current.x + (i*x*sign)][current.y + (i*y*sign)] = 1;
-    }
-    current.x = current.x + (sign*x*2);
-    current.y = current.y + (sign*y*2);
-
-    return false;
-  }
-
-  function walk() {
-    var dir = findDirection();
-    return (dir === - 1) ? true : move(dir);
-  }
-
-  /* Start looping */
-  while (!back || x_back.length) {
-    if (back) {
-      current.x = x_back.pop();
-      current.y = y_back.pop();
-    } else {
-      x_back.push(current.x);
-      y_back.push(current.y);
-    }
-    back = walk();
-  }
-
-  /* Return generated solution as an object */
-  return {
-    x : x_coords_out,
-    y : y_coords_out
-  };
 };
