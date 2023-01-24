@@ -9,7 +9,7 @@ function findSolution(matrix, startX, startY, endX, endY) {
   let current_y = startY;
 
   // Init output with start coords
-  const x_coords_out = [current_x]; 
+  const x_coords_out = [current_x];
   const y_coords_out = [current_y];
 
   const backwards = []; // For backwards walking
@@ -21,8 +21,8 @@ function findSolution(matrix, startX, startY, endX, endY) {
   /* Start walking, stop when reached end coords */
   while (current_x !== endX || current_y !== endY) {
 
-    matrix.visit(current_x, current_y);
-    const directions = matrix.getDirections(current_x, current_y);
+    matrix.visitCell(current_x, current_y);
+    const directions = matrix.getNeighbours(current_x, current_y);
 
     if (directions.length) {
       let next;

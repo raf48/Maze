@@ -13,31 +13,34 @@ function genDFS(width, height, out, startX, startY) {
   // Initialize 2-D maze with empty cells
   const maze = new Maze2D(width, height);
 
-  // Create a starting point
-  maze.visit(current_x, current_y);
-  out.addCell(current_x, current_y);
+  // Mark starting cell as visited
+  maze.visitCell(startX, startY);
+  // Add starting cell to output with no direction
+  out.addCellWithDirection(startX, startY, null);
 
-  // Start walking
+  // Walk until the whole maze is filled with cells
   while (!back || backwards.length) {
-    const directions = maze.getDirections(current_x, current_y);
+    const neighbours = maze.getNeighbours(current_x, current_y);
 
-    if (directions.length) {
+    if (neighbours.length) {
       let next;
-      // Push for backtrack only cells with multiple directions
-      if (directions.length > 1) {
+      // Push for backtrack only cells with multiple neighbours
+      if (neighbours.length > 1) {
         backwards.push(current_x, current_y);
-        // Walk in random direction
-        next = directions.getRandom();
+        // Walk in a random direction
+        next = neighbours.getRandom();
       } else {
-        next = directions[0];
+        next = neighbours[0];
       }
       back = false;
-      maze.visit(next[0], next[1]);
       current_x = next[0];
       current_y = next[1];
-      out.addCell(next[0], next[1], next[2]);
+
+      maze.visitCell(current_x, current_y);
+      // Store: x, y and direction
+      out.addCellWithDirection(current_x, current_y, next[2]);
     } else {
-      // Go back
+      // Walk backwards
       back = true;
       current_y = backwards.pop();
       current_x = backwards.pop();

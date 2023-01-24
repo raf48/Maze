@@ -6,7 +6,7 @@ class Maze2D {
   constructor(width, height, initValue) {
     this.width = width;
     this.height = height;
-    
+
     const value = initValue || false;
     // Initialize maze as 2-D array containing "initValue"
     this.maze = [];
@@ -17,12 +17,12 @@ class Maze2D {
   }
 
   /* Mark cell as visited */
-  visit(x, y) {
+  visitCell(x, y) {
     this.maze[x][y] = true;
   }
 
   /* Mark cell as not visited */
-  unvisit(x, y) {
+  unvisitCell(x, y) {
     this.maze[x][y] = false;
   }
 
@@ -42,9 +42,9 @@ class Maze2D {
   canWest(x, y) { return x - 1 >= 0 && !this.maze[x - 1][y]; }
   west(x, y) { return [x - 1, y, Maze2D.WEST]; }
 
-  /* Return all available directions based on input coordinates
-   * Direction = [finish_x, finish_y, direction to input point] */
-  getDirections(x, y) {
+  /* Return all available neighbour cells based on input coordinates
+   * Direction = [neighbour_x, neighbour_y, direction to neighbour cell] */
+  getNeighbours(x, y) {
     const directions = [];
 
     if (this.canNorth(x, y)) directions.push(this.north(x, y));
@@ -57,7 +57,7 @@ class Maze2D {
 
   /* Init walls object based on storage data structure */
   initWalls(dataStructure) {
-    
+
     if (dataStructure === 'heap') {
       this.walls = new MinHeap();
     } else {
@@ -131,7 +131,7 @@ class Maze2D {
 
   /* Add walls to storage */
   addWalls(x, y) {
-    const dir = this.getDirections(x, y);
+    const dir = this.getNeighbours(x, y);
 
     for (let i = 0; i < dir.length; i++) {
       // Insert into data structure
@@ -139,7 +139,7 @@ class Maze2D {
         x: dir[i][0],
         y: dir[i][1],
         direction: dir[i][2]
-      })
+      });
     }
   }
 }

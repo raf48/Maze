@@ -9,8 +9,8 @@ function genPrim(width, height, out, startX, startY, dataStructure) {
   maze.initWalls(dataStructure);
 
   /* Mark first cell as visited */
-  maze.visit(startX, startY);
-  /* Push adjacent walls to storage */   
+  maze.visitCell(startX, startY);
+  /* Push adjacent walls to storage */
   maze.addWalls(startX, startY);
   /* Push cell coordinates to the output stack */
   out.addCell(startX, startY);
@@ -23,7 +23,7 @@ function genPrim(width, height, out, startX, startY, dataStructure) {
     const w = walls.remove();
     /* Check if the opposite cell is not visited */
     if (!maze.isVisited(w.x, w.y)) {
-      maze.visit(w.x, w.y);
+      maze.visitCell(w.x, w.y);
       maze.addWalls(w.x, w.y);
       out.addCell(w.x, w.y, w.direction);
     }

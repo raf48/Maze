@@ -84,7 +84,7 @@ function genKruskal(width, height, out) {
     /* Merge two walls from different sets */
     if (differentSets(wall.left, wall.right)) {
       mergeSets(wall.left, wall.right);
-      out.addWall(wall.left, wall.right);
+      out.addAdjecentWalls(wall.left, wall.right);
     }
   }
 };

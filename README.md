@@ -12,6 +12,7 @@ Maze is generated using one of the following algorithms:
 * Prim's
 * Random traversal
 * Eller's
+* Recursive division
 
 Note: Random traversal is implemented as same as Prim's only without a heap.
 

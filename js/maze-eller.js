@@ -150,6 +150,8 @@ function genEller(width, height, output) {
   /* Connect all cells in the last row */
   joinAdjacent(row, true);
 
+  // console.log(out.x_coords_out, out.y_coords_out);
   output.x = out.x_coords_out;
   output.y = out.y_coords_out;
+  // console.log(output);
 };
